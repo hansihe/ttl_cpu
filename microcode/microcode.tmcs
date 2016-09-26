@@ -1,0 +1,326 @@
+# ========
+# Addressed Operation macros
+# ========
+define(`alu_op_i', `
+<1
+EMIT_IRH_DBUS
+')
+
+define(`alu_op_a', `
+<1
+ALU_MODE SHORT_A
+LATCH_ALUO
+>2
+<2
+EMIT_ALUO_REG_DBUS
+')
+
+define(`alu_op_m', `
+<1
+EMIT_IRH_DBUS
+LATCH_RA_L
+>2
+<2
+EMIT_RM_DBUS
+')
+
+define(`alu_op_p', `
+<1
+EMIT_IRH_DBUS
+LATCH_RA_L
+>2
+<2
+EMIT_RM_DBUS
+LATCH_RA_L
+<3
+EMIT_RM_DBUS
+')
+
+define(`alu_op_post', `
+ALU_MODE $1
+LATCH_ACC
+>0
+')
+
+# Override the first stage of every opcode so that
+# ir load is performed on every opcode.
+:OVERRIDE_PCS 0
+EMIT_PC_PCA
+LATCH_IR
+LATCH_PC
+>1
+
+# ========
+# Default (NOP)
+# ========
+:DEFAULT
+<1
+>0
+
+# ========
+# NOP
+# ========
+:OPCODE 00
+<1
+>0
+
+# ========
+# Load
+# ========
+:OPCODE 08
+alu_op_i
+alu_op_post(SHORT_B)
+:OPCODE 09
+alu_op_a
+alu_op_post(SHORT_B)
+:OPCODE 0a
+alu_op_m
+alu_op_post(SHORT_B)
+:OPCODE 0b
+alu_op_p
+alu_op_post(SHORT_B)
+
+# ========
+# Store Memory
+# ========
+:OPCODE 12
+<1
+EMIT_IRH_DBUS
+LATCH_RA_L
+>2
+<2
+ALU_MODE SHORT_A
+EMIT_ALUO_DBUS
+LATCH_RM
+>0
+
+# ========
+# Add (No carry)
+# ========
+:OPCODE 20
+alu_op_i
+alu_op_post(ADD)
+:OPCODE 21
+alu_op_a
+alu_op_post(ADD)
+:OPCODE 22
+alu_op_m
+alu_op_post(ADD)
+:OPCODE 23
+alu_op_p
+alu_op_post(ADD)
+# ========
+# Add (Carry)
+# ========
+:OPCODE 24
+alu_op_i
+LATCH_CARRY
+alu_op_post(ADDC)
+:OPCODE 25
+alu_op_a
+LATCH_CARRY
+alu_op_post(ADDC)
+:OPCODE 26
+alu_op_m
+LATCH_CARRY
+alu_op_post(ADDC)
+:OPCODE 27
+alu_op_p
+LATCH_CARRY
+alu_op_post(ADDC)
+
+# ========
+# Subtract (No carry)
+# ========
+:OPCODE 30
+alu_op_i
+alu_op_post(SUB_B)
+:OPCODE 31
+alu_op_a
+alu_op_post(SUB_B)
+:OPCODE 32
+alu_op_m
+alu_op_post(SUB_B)
+:OPCODE 33
+alu_op_p
+alu_op_post(SUB_B)
+# ========
+# Subtract (Carry)
+# ========
+:OPCODE 34
+alu_op_i
+LATCH_CARRY
+alu_op_post(SUBC_B)
+:OPCODE 35
+alu_op_a
+LATCH_CARRY
+alu_op_post(SUBC_B)
+:OPCODE 36
+alu_op_m
+LATCH_CARRY
+alu_op_post(SUBC_B)
+:OPCODE 37
+alu_op_p
+LATCH_CARRY
+alu_op_post(SUBC_B)
+
+# ========
+# AND
+# ========
+:OPCODE 40
+alu_op_i
+alu_op_post(AND)
+:OPCODE 41
+alu_op_a
+alu_op_post(AND)
+:OPCODE 42
+alu_op_m
+alu_op_post(AND)
+:OPCODE 43
+alu_op_p
+alu_op_post(AND)
+
+# ========
+# OR
+# ========
+:OPCODE 48
+alu_op_i
+alu_op_post(OR)
+:OPCODE 49
+alu_op_a
+alu_op_post(OR)
+:OPCODE 4a
+alu_op_m
+alu_op_post(OR)
+:OPCODE 4b
+alu_op_p
+alu_op_post(OR)
+
+# ========
+# XOR
+# ========
+:OPCODE 50
+alu_op_i
+alu_op_post(XOR)
+:OPCODE 51
+alu_op_a
+alu_op_post(XOR)
+:OPCODE 52
+alu_op_m
+alu_op_post(XOR)
+:OPCODE 53
+alu_op_p
+alu_op_post(XOR)
+
+# ========
+# NOT
+# ========
+:OPCODE 58
+<1
+ALU_MODE NOT_B
+LATCH_ACC
+>0
+
+# ========
+# SHJMP
+# ========
+:OPCODE 60
+alu_op_i
+LATCH_PC_HS
+>0
+:OPCODE 61
+alu_op_a
+LATCH_PC_HS
+>0
+:OPCODE 62
+alu_op_m
+LATCH_PC_HS
+>0
+:OPCODE 63
+alu_op_p
+LATCH_PC_HS
+>0
+
+# ========
+# SBSEL
+# ========
+:OPCODE 68
+alu_op_i
+LATCH_RA_H
+>0
+:OPCODE 69
+alu_op_a
+LATCH_RA_H
+>0
+:OPCODE 6a
+alu_op_m
+LATCH_RA_H
+>0
+:OPCODE 6b
+alu_op_p
+LATCH_RA_H
+>0
+
+# ========
+# Jump macro
+# ========
+define(`jump_cond', `
+<1
+ALU_MODE SHORT_A
+>2
+<2
+EMIT_IRH_DBUS
+EMIT_DBUS_PCA
+')
+
+# ========
+# Jump
+# ========
+# True
+:OPCODE B0
+<1
+EMIT_IRH_DBUS
+EMIT_DBUS_PCA
+LATCH_PC
+>0
+# If zero
+:OPCODE B1
+jump_cond
+@Z LATCH_PC
+>0
+# Greater zero
+:OPCODE B2
+jump_cond
+@!Z!S LATCH_PC
+>0
+# Less zero
+:OPCODE B3
+jump_cond
+@S LATCH_PC
+>0
+# Carry
+:OPCODE B4
+jump_cond
+@C LATCH_PC
+>0
+# Not zero
+:OPCODE B9
+jump_cond
+@!Z LATCH_PC
+>0
+# Less equal zero
+:OPCODE BA
+jump_cond
+@Z LATCH_PC
+@S LATCH_PC
+>0
+# Greater equal zero
+:OPCODE BB
+jump_cond
+@!S LATCH_PC
+>0
+# Not carry
+:OPCODE BC
+jump_cond
+@!C LATCH_PC
+>0

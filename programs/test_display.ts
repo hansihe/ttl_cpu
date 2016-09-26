@@ -1,0 +1,5 @@
+START:
+sbsel 0b11111000
+sm 0b00010000
+addi 1
+jt START

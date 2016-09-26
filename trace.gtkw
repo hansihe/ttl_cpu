@@ -1,0 +1,140 @@
+[*]
+[*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
+[*] Thu Sep  8 22:20:11 2016
+[*]
+[dumpfile] "/home/hansihe/git/ttlcpu/trace.vcd"
+[dumpfile_mtime] "Thu Sep  8 22:18:18 2016"
+[dumpfile_size] 17817
+[savefile] "/home/hansihe/git/ttlcpu/trace.gtkw"
+[timestart] 0
+[size] 1920 1060
+[pos] -1 -1
+*-5.543202 380 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] main_tb.
+[treeopen] main_tb.m0.
+[treeopen] main_tb.m0.ctl.
+[treeopen] main_tb.m0.dp.
+[treeopen] main_tb.m0.pc.
+[sst_width] 264
+[signals_width] 323
+[sst_expanded] 1
+[sst_vpaned_height] 325
+@28
+main_tb.m0.clock
+@2022
+^1 /tmp/../home/hansihe/git/ttlcpu/instructions_gtkwave.txt
+main_tb.m0.ctl.ir_instr[7:0]
+@22
+main_tb.m0.ctl.ir_instr[7:0]
+@c00022
+main_tb.m0.dbus[7:0]
+@28
+(0)main_tb.m0.dbus[7:0]
+(1)main_tb.m0.dbus[7:0]
+(2)main_tb.m0.dbus[7:0]
+(3)main_tb.m0.dbus[7:0]
+(4)main_tb.m0.dbus[7:0]
+(5)main_tb.m0.dbus[7:0]
+(6)main_tb.m0.dbus[7:0]
+(7)main_tb.m0.dbus[7:0]
+@1401200
+-group_end
+@22
+main_tb.m0.dmem.address[15:0]
+main_tb.m0.ram_addr.rabus[15:0]
+main_tb.m0.ram_addr.ra_h[7:0]
+main_tb.m0.ram_addr.ra_l[7:0]
+@200
+-Instruction
+@22
+main_tb.m0.pc.reg_pc_out[15:0]
+main_tb.m0.ctl.ir[15:0]
+main_tb.m0.ctl.ir_instr[7:0]
+main_tb.m0.ctl.ir_aux[7:0]
+@200
+-Microcode
+@c00022
+main_tb.m0.ctl.c_state[3:0]
+@28
+(0)main_tb.m0.ctl.c_state[3:0]
+(1)main_tb.m0.ctl.c_state[3:0]
+(2)main_tb.m0.ctl.c_state[3:0]
+(3)main_tb.m0.ctl.c_state[3:0]
+@1401200
+-group_end
+@22
+main_tb.m0.ctl.branch_state[3:0]
+main_tb.m0.ctl.mc_addr[15:0]
+main_tb.m0.ctl.mc_out[31:0]
+@200
+-Registers
+@22
+main_tb.m0.pc.reg_pc_out[15:0]
+@c00023
+main_tb.m0.dp.reg_acc_out[7:0]
+@28
+(0)main_tb.m0.dp.reg_acc_out[7:0]
+(1)main_tb.m0.dp.reg_acc_out[7:0]
+(2)main_tb.m0.dp.reg_acc_out[7:0]
+(3)main_tb.m0.dp.reg_acc_out[7:0]
+(4)main_tb.m0.dp.reg_acc_out[7:0]
+(5)main_tb.m0.dp.reg_acc_out[7:0]
+(6)main_tb.m0.dp.reg_acc_out[7:0]
+(7)main_tb.m0.dp.reg_acc_out[7:0]
+@1401201
+-group_end
+@28
+main_tb.m0.dp.reg_carry_out
+@22
+main_tb.m0.pc.reg_pc_out[15:0]
+main_tb.m0.pc.reg_pc_hs_out[7:0]
+@200
+-Control signals
+@28
+main_tb.m0.ctl.c_emit_aluo_dbus
+main_tb.m0.ctl.c_emit_aluo_reg_dbus
+main_tb.m0.ctl.c_emit_hs_dbus_pca_in_a
+main_tb.m0.ctl.c_emit_iabus_pca_in_b
+main_tb.m0.ctl.c_emit_irh_dbus
+main_tb.m0.ctl.c_emit_pch_dbus
+main_tb.m0.ctl.c_emit_pcl_dbus
+main_tb.m0.ctl.c_emit_ra_h_dbus
+main_tb.m0.ctl.c_emit_rm_dbus
+main_tb.m0.ctl.c_latch_acc
+main_tb.m0.ctl.c_latch_aluo
+main_tb.m0.ctl.c_latch_carry
+main_tb.m0.ctl.c_latch_ir
+main_tb.m0.ctl.c_latch_pc
+main_tb.m0.ctl.c_latch_pc_hs
+main_tb.m0.ctl.c_latch_ra_h
+main_tb.m0.ctl.c_latch_ra_l
+main_tb.m0.ctl.c_latch_rm
+@200
+-ALU
+@28
+main_tb.m0.ctl.c_alu_inv_a
+main_tb.m0.ctl.c_alu_inv_b
+main_tb.m0.ctl.c_alu_inv_cin
+main_tb.m0.ctl.c_alu_z_a
+main_tb.m0.ctl.c_alu_z_b
+main_tb.m0.ctl.c_alu_z_cin
+main_tb.m0.ctl.c_alu_mode[1:0]
+@c00022
+main_tb.m0.dp.c_alu.out[7:0]
+@28
+(0)main_tb.m0.dp.c_alu.out[7:0]
+(1)main_tb.m0.dp.c_alu.out[7:0]
+(2)main_tb.m0.dp.c_alu.out[7:0]
+(3)main_tb.m0.dp.c_alu.out[7:0]
+(4)main_tb.m0.dp.c_alu.out[7:0]
+(5)main_tb.m0.dp.c_alu.out[7:0]
+(6)main_tb.m0.dp.c_alu.out[7:0]
+(7)main_tb.m0.dp.c_alu.out[7:0]
+@1401200
+-group_end
+@28
+main_tb.m0.ctl.alu_zero
+main_tb.m0.ctl.alu_sign
+main_tb.m0.ctl.alu_carry
+[pattern_trace] 1
+[pattern_trace] 0

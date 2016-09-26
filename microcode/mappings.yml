@@ -1,0 +1,62 @@
+# ================
+# Microcode level
+# ================
+
+# Flags specify what bits are asserted for what specific functions.
+# They consist of a name mapped to the bitnumber or array of bitnumbers that
+# are asserted for a given flag.
+flags:
+  latch_acc: 0
+  latch_pc: 1
+  latch_pc_hs: 2
+  latch_ir: 3
+  latch_aluo: 4
+  latch_carry: 5
+  latch_ra_l: 6
+  latch_ra_h: 7
+  latch_rm: 8
+  emit_dbus_pca: 9
+  emit_pc_pca: 10
+  emit_pch_dbus: 11
+  emit_pcl_dbus: 12
+  emit_aluo_dbus: 13
+  emit_aluo_reg_dbus: 14
+  emit_irh_dbus: 15
+  emit_rm_dbus: 16
+  emit_ra_h_dbus: 17
+  address_reg: 18
+  alu_add: []
+  alu_and: [24]
+  alu_or: [25]
+  alu_xor: [24, 25]
+  alu_pass_a: 26
+  alu_pass_b: 27
+  alu_pass_cin: 28
+  alu_inv_a: 29
+  alu_inv_b: 30
+  alu_inv_cin: 31
+
+# Aliases specify a mapping for an alias to a certain flags.
+# An alias may refer to another alias.
+aliases:
+  alum_short_a: [alu_pass_a, alu_add]
+  alum_short_b: [alu_pass_b, alu_add]
+  alum_add: [alu_pass_a, alu_pass_b, alu_add]
+  alum_addc: [alu_pass_a, alu_pass_b, alu_pass_cin, alu_add]
+  alum_sub_a: [alu_pass_a, alu_pass_b, alu_inv_a, alu_inv_cin, alu_add]
+  alum_subc_a: [alu_sub_a, alu_pass_cin]
+  alum_sub_b: [alu_pass_a, alu_pass_b, alu_inv_b, alu_inv_cin, alu_add]
+  alum_subc_b: [alu_sub_b, alu_pass_cin]
+  alum_not_a: [alu_pass_a, alu_inv_a, alu_add]
+  alum_not_b: [alu_pass_b, alu_inv_b, alu_add]
+  alum_and: [alu_pass_a, alu_pass_b, alu_and]
+  alum_or: [alu_pass_a, alu_pass_b, alu_or]
+  alum_xor: [alu_pass_a, alu_pass_b, alu_xor]
+
+# Conditionals can be specified in front of flags with an '@S!Z <flag>' notation.
+# They are specified in the array below from most significant to least significant.
+conditionals:
+  - nil
+  - C
+  - S
+  - Z

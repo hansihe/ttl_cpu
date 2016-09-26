@@ -1,0 +1,473 @@
+Created by PLY version 3.6 (http://www.dabeaz.com/ply)
+
+Grammar
+
+Rule 0     S' -> entry
+Rule 1     entry -> COLON ident entry_args COLON entry_contents
+Rule 2     entry_args -> empty
+Rule 3     entry_args -> entry_arg
+Rule 4     entry_args -> entry_args entry_arg
+Rule 5     entry_arg -> number
+Rule 6     entry_arg -> ident
+Rule 7     entry_contents -> entry_content_item
+Rule 8     entry_contents -> entry_contents entry_content_item
+Rule 9     entry_content_item -> COMEFROM number
+Rule 10    entry_content_item -> GOTO number
+Rule 11    entry_content_item -> ident
+Rule 12    entry_content_item -> flag_cond ident
+Rule 13    flag_cond -> COND_START flag_cond_items
+Rule 14    flag_cond_items -> flag_cond_items flag_cond_item
+Rule 15    flag_cond_items -> flag_cond_item
+Rule 16    flag_cond_item -> COND_INV COND_FLAG
+Rule 17    flag_cond_item -> COND_FLAG
+Rule 18    number -> NUM_OCT
+Rule 19    number -> NUM_BIN
+Rule 20    number -> NUM_HEX
+Rule 21    ident -> IDENT
+Rule 22    empty -> <empty>
+
+Terminals, with rules where they appear
+
+COLON                : 1 1
+COMEFROM             : 9
+COND_FLAG            : 16 17
+COND_INV             : 16
+COND_START           : 13
+GOTO                 : 10
+IDENT                : 21
+NUM_BIN              : 19
+NUM_HEX              : 20
+NUM_OCT              : 18
+error                : 
+
+Nonterminals, with rules where they appear
+
+empty                : 2
+entry                : 0
+entry_arg            : 3 4
+entry_args           : 1 4
+entry_content_item   : 7 8
+entry_contents       : 1 8
+flag_cond            : 12
+flag_cond_item       : 14 15
+flag_cond_items      : 13 14
+ident                : 1 6 11 12
+number               : 5 9 10
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . entry
+    (1) entry -> . COLON ident entry_args COLON entry_contents
+
+    COLON           shift and go to state 2
+
+    entry                          shift and go to state 1
+
+state 1
+
+    (0) S' -> entry .
+
+
+
+state 2
+
+    (1) entry -> COLON . ident entry_args COLON entry_contents
+    (21) ident -> . IDENT
+
+    IDENT           shift and go to state 4
+
+    ident                          shift and go to state 3
+
+state 3
+
+    (1) entry -> COLON ident . entry_args COLON entry_contents
+    (2) entry_args -> . empty
+    (3) entry_args -> . entry_arg
+    (4) entry_args -> . entry_args entry_arg
+    (22) empty -> .
+    (5) entry_arg -> . number
+    (6) entry_arg -> . ident
+    (18) number -> . NUM_OCT
+    (19) number -> . NUM_BIN
+    (20) number -> . NUM_HEX
+    (21) ident -> . IDENT
+
+  ! shift/reduce conflict for NUM_OCT resolved as shift
+  ! shift/reduce conflict for NUM_BIN resolved as shift
+  ! shift/reduce conflict for NUM_HEX resolved as shift
+  ! shift/reduce conflict for IDENT resolved as shift
+    COLON           reduce using rule 22 (empty -> .)
+    NUM_OCT         shift and go to state 11
+    NUM_BIN         shift and go to state 7
+    NUM_HEX         shift and go to state 5
+    IDENT           shift and go to state 4
+
+  ! NUM_OCT         [ reduce using rule 22 (empty -> .) ]
+  ! NUM_BIN         [ reduce using rule 22 (empty -> .) ]
+  ! NUM_HEX         [ reduce using rule 22 (empty -> .) ]
+  ! IDENT           [ reduce using rule 22 (empty -> .) ]
+
+    ident                          shift and go to state 6
+    entry_args                     shift and go to state 8
+    number                         shift and go to state 9
+    entry_arg                      shift and go to state 10
+    empty                          shift and go to state 12
+
+state 4
+
+    (21) ident -> IDENT .
+
+    COMEFROM        reduce using rule 21 (ident -> IDENT .)
+    GOTO            reduce using rule 21 (ident -> IDENT .)
+    IDENT           reduce using rule 21 (ident -> IDENT .)
+    COND_START      reduce using rule 21 (ident -> IDENT .)
+    $end            reduce using rule 21 (ident -> IDENT .)
+    COLON           reduce using rule 21 (ident -> IDENT .)
+    NUM_OCT         reduce using rule 21 (ident -> IDENT .)
+    NUM_BIN         reduce using rule 21 (ident -> IDENT .)
+    NUM_HEX         reduce using rule 21 (ident -> IDENT .)
+
+
+state 5
+
+    (20) number -> NUM_HEX .
+
+    COLON           reduce using rule 20 (number -> NUM_HEX .)
+    NUM_OCT         reduce using rule 20 (number -> NUM_HEX .)
+    NUM_BIN         reduce using rule 20 (number -> NUM_HEX .)
+    NUM_HEX         reduce using rule 20 (number -> NUM_HEX .)
+    IDENT           reduce using rule 20 (number -> NUM_HEX .)
+    COMEFROM        reduce using rule 20 (number -> NUM_HEX .)
+    GOTO            reduce using rule 20 (number -> NUM_HEX .)
+    COND_START      reduce using rule 20 (number -> NUM_HEX .)
+    $end            reduce using rule 20 (number -> NUM_HEX .)
+
+
+state 6
+
+    (6) entry_arg -> ident .
+
+    COLON           reduce using rule 6 (entry_arg -> ident .)
+    NUM_OCT         reduce using rule 6 (entry_arg -> ident .)
+    NUM_BIN         reduce using rule 6 (entry_arg -> ident .)
+    NUM_HEX         reduce using rule 6 (entry_arg -> ident .)
+    IDENT           reduce using rule 6 (entry_arg -> ident .)
+
+
+state 7
+
+    (19) number -> NUM_BIN .
+
+    COLON           reduce using rule 19 (number -> NUM_BIN .)
+    NUM_OCT         reduce using rule 19 (number -> NUM_BIN .)
+    NUM_BIN         reduce using rule 19 (number -> NUM_BIN .)
+    NUM_HEX         reduce using rule 19 (number -> NUM_BIN .)
+    IDENT           reduce using rule 19 (number -> NUM_BIN .)
+    COMEFROM        reduce using rule 19 (number -> NUM_BIN .)
+    GOTO            reduce using rule 19 (number -> NUM_BIN .)
+    COND_START      reduce using rule 19 (number -> NUM_BIN .)
+    $end            reduce using rule 19 (number -> NUM_BIN .)
+
+
+state 8
+
+    (1) entry -> COLON ident entry_args . COLON entry_contents
+    (4) entry_args -> entry_args . entry_arg
+    (5) entry_arg -> . number
+    (6) entry_arg -> . ident
+    (18) number -> . NUM_OCT
+    (19) number -> . NUM_BIN
+    (20) number -> . NUM_HEX
+    (21) ident -> . IDENT
+
+    COLON           shift and go to state 13
+    NUM_OCT         shift and go to state 11
+    NUM_BIN         shift and go to state 7
+    NUM_HEX         shift and go to state 5
+    IDENT           shift and go to state 4
+
+    entry_arg                      shift and go to state 14
+    ident                          shift and go to state 6
+    number                         shift and go to state 9
+
+state 9
+
+    (5) entry_arg -> number .
+
+    COLON           reduce using rule 5 (entry_arg -> number .)
+    NUM_OCT         reduce using rule 5 (entry_arg -> number .)
+    NUM_BIN         reduce using rule 5 (entry_arg -> number .)
+    NUM_HEX         reduce using rule 5 (entry_arg -> number .)
+    IDENT           reduce using rule 5 (entry_arg -> number .)
+
+
+state 10
+
+    (3) entry_args -> entry_arg .
+
+    COLON           reduce using rule 3 (entry_args -> entry_arg .)
+    NUM_OCT         reduce using rule 3 (entry_args -> entry_arg .)
+    NUM_BIN         reduce using rule 3 (entry_args -> entry_arg .)
+    NUM_HEX         reduce using rule 3 (entry_args -> entry_arg .)
+    IDENT           reduce using rule 3 (entry_args -> entry_arg .)
+
+
+state 11
+
+    (18) number -> NUM_OCT .
+
+    COLON           reduce using rule 18 (number -> NUM_OCT .)
+    NUM_OCT         reduce using rule 18 (number -> NUM_OCT .)
+    NUM_BIN         reduce using rule 18 (number -> NUM_OCT .)
+    NUM_HEX         reduce using rule 18 (number -> NUM_OCT .)
+    IDENT           reduce using rule 18 (number -> NUM_OCT .)
+    COMEFROM        reduce using rule 18 (number -> NUM_OCT .)
+    GOTO            reduce using rule 18 (number -> NUM_OCT .)
+    COND_START      reduce using rule 18 (number -> NUM_OCT .)
+    $end            reduce using rule 18 (number -> NUM_OCT .)
+
+
+state 12
+
+    (2) entry_args -> empty .
+
+    COLON           reduce using rule 2 (entry_args -> empty .)
+    NUM_OCT         reduce using rule 2 (entry_args -> empty .)
+    NUM_BIN         reduce using rule 2 (entry_args -> empty .)
+    NUM_HEX         reduce using rule 2 (entry_args -> empty .)
+    IDENT           reduce using rule 2 (entry_args -> empty .)
+
+
+state 13
+
+    (1) entry -> COLON ident entry_args COLON . entry_contents
+    (7) entry_contents -> . entry_content_item
+    (8) entry_contents -> . entry_contents entry_content_item
+    (9) entry_content_item -> . COMEFROM number
+    (10) entry_content_item -> . GOTO number
+    (11) entry_content_item -> . ident
+    (12) entry_content_item -> . flag_cond ident
+    (21) ident -> . IDENT
+    (13) flag_cond -> . COND_START flag_cond_items
+
+    COMEFROM        shift and go to state 20
+    GOTO            shift and go to state 16
+    IDENT           shift and go to state 4
+    COND_START      shift and go to state 17
+
+    ident                          shift and go to state 15
+    flag_cond                      shift and go to state 18
+    entry_contents                 shift and go to state 19
+    entry_content_item             shift and go to state 21
+
+state 14
+
+    (4) entry_args -> entry_args entry_arg .
+
+    COLON           reduce using rule 4 (entry_args -> entry_args entry_arg .)
+    NUM_OCT         reduce using rule 4 (entry_args -> entry_args entry_arg .)
+    NUM_BIN         reduce using rule 4 (entry_args -> entry_args entry_arg .)
+    NUM_HEX         reduce using rule 4 (entry_args -> entry_args entry_arg .)
+    IDENT           reduce using rule 4 (entry_args -> entry_args entry_arg .)
+
+
+state 15
+
+    (11) entry_content_item -> ident .
+
+    COMEFROM        reduce using rule 11 (entry_content_item -> ident .)
+    GOTO            reduce using rule 11 (entry_content_item -> ident .)
+    IDENT           reduce using rule 11 (entry_content_item -> ident .)
+    COND_START      reduce using rule 11 (entry_content_item -> ident .)
+    $end            reduce using rule 11 (entry_content_item -> ident .)
+
+
+state 16
+
+    (10) entry_content_item -> GOTO . number
+    (18) number -> . NUM_OCT
+    (19) number -> . NUM_BIN
+    (20) number -> . NUM_HEX
+
+    NUM_OCT         shift and go to state 11
+    NUM_BIN         shift and go to state 7
+    NUM_HEX         shift and go to state 5
+
+    number                         shift and go to state 22
+
+state 17
+
+    (13) flag_cond -> COND_START . flag_cond_items
+    (14) flag_cond_items -> . flag_cond_items flag_cond_item
+    (15) flag_cond_items -> . flag_cond_item
+    (16) flag_cond_item -> . COND_INV COND_FLAG
+    (17) flag_cond_item -> . COND_FLAG
+
+    COND_INV        shift and go to state 23
+    COND_FLAG       shift and go to state 26
+
+    flag_cond_item                 shift and go to state 24
+    flag_cond_items                shift and go to state 25
+
+state 18
+
+    (12) entry_content_item -> flag_cond . ident
+    (21) ident -> . IDENT
+
+    IDENT           shift and go to state 4
+
+    ident                          shift and go to state 27
+
+state 19
+
+    (1) entry -> COLON ident entry_args COLON entry_contents .
+    (8) entry_contents -> entry_contents . entry_content_item
+    (9) entry_content_item -> . COMEFROM number
+    (10) entry_content_item -> . GOTO number
+    (11) entry_content_item -> . ident
+    (12) entry_content_item -> . flag_cond ident
+    (21) ident -> . IDENT
+    (13) flag_cond -> . COND_START flag_cond_items
+
+    $end            reduce using rule 1 (entry -> COLON ident entry_args COLON entry_contents .)
+    COMEFROM        shift and go to state 20
+    GOTO            shift and go to state 16
+    IDENT           shift and go to state 4
+    COND_START      shift and go to state 17
+
+    ident                          shift and go to state 15
+    flag_cond                      shift and go to state 18
+    entry_content_item             shift and go to state 28
+
+state 20
+
+    (9) entry_content_item -> COMEFROM . number
+    (18) number -> . NUM_OCT
+    (19) number -> . NUM_BIN
+    (20) number -> . NUM_HEX
+
+    NUM_OCT         shift and go to state 11
+    NUM_BIN         shift and go to state 7
+    NUM_HEX         shift and go to state 5
+
+    number                         shift and go to state 29
+
+state 21
+
+    (7) entry_contents -> entry_content_item .
+
+    COMEFROM        reduce using rule 7 (entry_contents -> entry_content_item .)
+    GOTO            reduce using rule 7 (entry_contents -> entry_content_item .)
+    IDENT           reduce using rule 7 (entry_contents -> entry_content_item .)
+    COND_START      reduce using rule 7 (entry_contents -> entry_content_item .)
+    $end            reduce using rule 7 (entry_contents -> entry_content_item .)
+
+
+state 22
+
+    (10) entry_content_item -> GOTO number .
+
+    COMEFROM        reduce using rule 10 (entry_content_item -> GOTO number .)
+    GOTO            reduce using rule 10 (entry_content_item -> GOTO number .)
+    IDENT           reduce using rule 10 (entry_content_item -> GOTO number .)
+    COND_START      reduce using rule 10 (entry_content_item -> GOTO number .)
+    $end            reduce using rule 10 (entry_content_item -> GOTO number .)
+
+
+state 23
+
+    (16) flag_cond_item -> COND_INV . COND_FLAG
+
+    COND_FLAG       shift and go to state 30
+
+
+state 24
+
+    (15) flag_cond_items -> flag_cond_item .
+
+    COND_INV        reduce using rule 15 (flag_cond_items -> flag_cond_item .)
+    COND_FLAG       reduce using rule 15 (flag_cond_items -> flag_cond_item .)
+    IDENT           reduce using rule 15 (flag_cond_items -> flag_cond_item .)
+
+
+state 25
+
+    (13) flag_cond -> COND_START flag_cond_items .
+    (14) flag_cond_items -> flag_cond_items . flag_cond_item
+    (16) flag_cond_item -> . COND_INV COND_FLAG
+    (17) flag_cond_item -> . COND_FLAG
+
+    IDENT           reduce using rule 13 (flag_cond -> COND_START flag_cond_items .)
+    COND_INV        shift and go to state 23
+    COND_FLAG       shift and go to state 26
+
+    flag_cond_item                 shift and go to state 31
+
+state 26
+
+    (17) flag_cond_item -> COND_FLAG .
+
+    COND_INV        reduce using rule 17 (flag_cond_item -> COND_FLAG .)
+    COND_FLAG       reduce using rule 17 (flag_cond_item -> COND_FLAG .)
+    IDENT           reduce using rule 17 (flag_cond_item -> COND_FLAG .)
+
+
+state 27
+
+    (12) entry_content_item -> flag_cond ident .
+
+    COMEFROM        reduce using rule 12 (entry_content_item -> flag_cond ident .)
+    GOTO            reduce using rule 12 (entry_content_item -> flag_cond ident .)
+    IDENT           reduce using rule 12 (entry_content_item -> flag_cond ident .)
+    COND_START      reduce using rule 12 (entry_content_item -> flag_cond ident .)
+    $end            reduce using rule 12 (entry_content_item -> flag_cond ident .)
+
+
+state 28
+
+    (8) entry_contents -> entry_contents entry_content_item .
+
+    COMEFROM        reduce using rule 8 (entry_contents -> entry_contents entry_content_item .)
+    GOTO            reduce using rule 8 (entry_contents -> entry_contents entry_content_item .)
+    IDENT           reduce using rule 8 (entry_contents -> entry_contents entry_content_item .)
+    COND_START      reduce using rule 8 (entry_contents -> entry_contents entry_content_item .)
+    $end            reduce using rule 8 (entry_contents -> entry_contents entry_content_item .)
+
+
+state 29
+
+    (9) entry_content_item -> COMEFROM number .
+
+    COMEFROM        reduce using rule 9 (entry_content_item -> COMEFROM number .)
+    GOTO            reduce using rule 9 (entry_content_item -> COMEFROM number .)
+    IDENT           reduce using rule 9 (entry_content_item -> COMEFROM number .)
+    COND_START      reduce using rule 9 (entry_content_item -> COMEFROM number .)
+    $end            reduce using rule 9 (entry_content_item -> COMEFROM number .)
+
+
+state 30
+
+    (16) flag_cond_item -> COND_INV COND_FLAG .
+
+    COND_INV        reduce using rule 16 (flag_cond_item -> COND_INV COND_FLAG .)
+    COND_FLAG       reduce using rule 16 (flag_cond_item -> COND_INV COND_FLAG .)
+    IDENT           reduce using rule 16 (flag_cond_item -> COND_INV COND_FLAG .)
+
+
+state 31
+
+    (14) flag_cond_items -> flag_cond_items flag_cond_item .
+
+    COND_INV        reduce using rule 14 (flag_cond_items -> flag_cond_items flag_cond_item .)
+    COND_FLAG       reduce using rule 14 (flag_cond_items -> flag_cond_items flag_cond_item .)
+    IDENT           reduce using rule 14 (flag_cond_items -> flag_cond_items flag_cond_item .)
+
+WARNING: 
+WARNING: Conflicts:
+WARNING: 
+WARNING: shift/reduce conflict for NUM_OCT in state 3 resolved as shift
+WARNING: shift/reduce conflict for NUM_BIN in state 3 resolved as shift
+WARNING: shift/reduce conflict for NUM_HEX in state 3 resolved as shift
+WARNING: shift/reduce conflict for IDENT in state 3 resolved as shift

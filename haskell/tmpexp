@@ -1,0 +1,133 @@
+# ========
+# Addressed Operation macros
+# ========
+
+
+
+
+
+
+
+
+
+
+# Override the first stage of every opcode so that
+# ir load is performed on every opcode.
+:OVERRIDE_PCS 0:
+<0
+EMIT_PC_PCA
+@S!Z LATCH_IR
+LATCH_PC
+>1
+
+# ========
+# Default (NOP)
+# ========
+:DEFAULT:
+<1
+>0
+
+# ========
+# NOP
+# ========
+:OPCODE 0x00:
+<1
+>0
+
+# ========
+# Load
+# ========
+:OPCODE 0x08:
+
+<1
+EMIT_IRH_DBUS
+
+
+LATCH_ACC
+>0
+
+:OPCODE 0x09:
+<1
+LATCH_ALUO
+>2
+<2
+EMIT_ALUO_REG_DBUS
+
+
+LATCH_ACC
+>0
+
+:OPCODE 0x0a:
+
+<1
+EMIT_IRH_DBUS
+LATCH_RA_L
+>2
+<2
+EMIT_RM_DBUS
+
+
+LATCH_ACC
+>0
+
+:OPCODE 0x0b:
+
+<1
+EMIT_IRH_DBUS
+LATCH_RA_L
+>2
+<2
+EMIT_RM_DBUS
+LATCH_RA_L
+<3
+EMIT_RM_DBUS
+
+
+LATCH_ACC
+>0
+
+# Not zero
+:OPCODE 0xB9:
+
+<1
+>2
+<2
+EMIT_IRH_DBUS
+EMIT_DBUS_PCA
+
+@!Z LATCH_PC
+>0
+# Less equal zero
+:OPCODE 0xBA:
+
+<1
+>2
+<2
+EMIT_IRH_DBUS
+EMIT_DBUS_PCA
+
+@Z LATCH_PC
+@S LATCH_PC
+>0
+# Greater equal zero
+:OPCODE 0xBB:
+
+<1
+>2
+<2
+EMIT_IRH_DBUS
+EMIT_DBUS_PCA
+
+@!S LATCH_PC
+>0
+# Not carry
+:OPCODE 0xBC:
+
+<1
+>2
+<2
+EMIT_IRH_DBUS
+EMIT_DBUS_PCA
+
+@!C LATCH_PC
+>0
