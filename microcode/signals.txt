@@ -1,0 +1,29 @@
+0
+3:0 - Microcode PC next
+4 - Latch IR_R
+5 - Latch IR_D
+6 - Latch PCI_H
+7 - Latch PC
+
+1
+8 - Latch RAM
+9 - Latch ACC
+10 - Latch ALU_O
+11 - NC
+12 - Latch RAM_ADDR_L
+13 - Latch RAM_ADDR_H
+14 - NC
+15 - NC
+
+2
+19:16 - DBUS_EMIT_SELECT
+20 - EMIT_DBUS_PCADDER
+21 - EMIT_PC_PCADDER
+22 - RAM_ENABLE
+23 - EMIT_RAM_ADDR_H
+
+4
+31:24 - NC
+
+5
+39:32 - ALU_MODE

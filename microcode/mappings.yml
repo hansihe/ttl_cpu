@@ -5,36 +5,79 @@
 # Flags specify what bits are asserted for what specific functions.
 # They consist of a name mapped to the bitnumber or array of bitnumbers that
 # are asserted for a given flag.
+# 3:0 is reserved for MC_PC_NEXT.
 flags:
-  latch_acc: 0
-  latch_pc: 1
-  latch_pc_hs: 2
-  latch_ir: 3
-  latch_aluo: 4
-  latch_carry: 5
-  latch_ra_l: 6
-  latch_ra_h: 7
-  latch_rm: 8
-  emit_dbus_pca: 9
-  emit_pc_pca: 10
-  emit_pch_dbus: 11
-  emit_pcl_dbus: 12
-  emit_aluo_dbus: 13
-  emit_aluo_reg_dbus: 14
-  emit_irh_dbus: 15
-  emit_rm_dbus: 16
-  emit_ra_h_dbus: 17
-  address_reg: 18
-  alu_add: []
-  alu_and: [24]
-  alu_or: [25]
-  alu_xor: [24, 25]
-  alu_pass_a: 26
-  alu_pass_b: 27
-  alu_pass_cin: 28
-  alu_inv_a: 29
-  alu_inv_b: 30
-  alu_inv_cin: 31
+  # MEM0
+  latch_ir_r: [5]
+  latch_ir_d: [6]
+  latch_pci_h: [7]
+  latch_pc: [8]
+
+  # MEM1
+  latch_ram: [9]
+  latch_acc: [10]
+  latch_aluo: [11]
+  # 12: NC
+  latch_raddr_l: [13]
+  latch_raddr_h: [14]
+  # 15: NC
+  # 16: NC
+
+  # MEM2
+  # 17-20: dbus emit select
+  emit_ram_dbus: [-17, -18, 19, 20]
+  emit_aluo_dbus: [-17, -18, -19, 20]
+  emit_aluo_reg_dbus: [-17, -18, 19, -20]
+  emit_ir_d_dbus: [-17, -18, -19, -20]
+
+  emit_dbus_pc_adder: [-21]
+  emit_pc_pc_adder: [-22]
+  address_ram: [-23]
+  address_io: [23]
+  emit_ram_addr_h: [-24]
+
+  # MEM3
+  # 25-32: NC
+
+  # MEM4
+  alu_add: [-33, -34]
+  alu_and: [33, -34]
+  alu_xor: [-33, 34]
+  alu_or: [33, 34]
+  alu_pass_c: [-35]
+  alu_pass_b: [-36]
+  alu_pass_a: [-37]
+  alu_inv_c: [38]
+  alu_inv_b: [39]
+  alu_inv_a: [40]
+
+flag_defaults: [
+    0, 0, 0, 0, # MC_PC_NEXT
+    0, # latch_ir_r
+    0, # latch_ir_d
+    0, # latch_pci_h
+    0, # latch_pc
+    0, # latch_ram
+    0, # latch_acc
+    0, # latch_alu_o
+    0, # NC
+    0, # latch_ram_addr_l
+    0, # latch_ram_addr_h
+    0, 0, # NC
+    1, 0, 0, 0, # dbus emit select
+    1, # emit_dbus_pc_adder
+    1, # emit_pc_pc_adder
+    0, # io/ram addressing
+    0, # emit_ram_addr_h
+    0, 0, 0, 0, 0, 0, 0, 0, # NC
+    0, 0, # alu mode
+    1, # alu pass c
+    1, # alu pass b
+    1, # alu pass a
+    0, # alu inv c
+    0, # alu inv b
+    0  # alu inv a
+]
 
 # Aliases specify a mapping for an alias to a certain flags.
 # An alias may refer to another alias.

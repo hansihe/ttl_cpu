@@ -1,4 +1,4 @@
-module McAsmParser (parseAsm) where
+module McAsmParser where
 
 import Data.Maybe (isNothing)
 import Data.Functor ((<$>))

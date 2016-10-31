@@ -176,3 +176,5 @@ cabal.project.local
 
 # Custom
 a.out
+haskell/out.*
+haskell/McAsm
