@@ -11,6 +11,9 @@ import Control.Monad.Reader
 import qualified Data.Yaml as Yaml
 import System.IO (openFile, hClose, IOMode(WriteMode))
 import Data.Ix (range)
+import Data.List (find)
+import Data.Foldable (toList)
+import qualified Data.HashMap.Strict as HashMap
 
 import Data.Word (Word64, Word8)
 import Data.ByteString.Builder (word8, hPutBuilder)
@@ -22,12 +25,11 @@ main :: IO ()
 main = do
   [inFileName, outBaseName] <- getArgs
   inData <- readFile inFileName
-  let parsed = parseAsm inData
   mappings <- Yaml.decodeFileEither "../microcode/mappings.yml"
   case mappings of
     Left err -> print err
     Right mappingsInner ->
-      case parsed of
+      case parseAsm inData of
         Left err -> print err
         Right parsedInner ->
           case compile mappingsInner parsedInner of
@@ -49,36 +51,64 @@ writeBinaries dat outBaseName = do
 
 compile :: MappingData -> [AsmItem] -> Either CompileError Output
 compile mappings parsedData =
-  let opcodeMap = sortOpcodes parsedData
-      --filledDefaultStages = fillDefaultStages parsedData opcodeMap
-      compiled = compileOpcodes opcodeMap -- filledDefaultStages
-  in Right $ runReader compiled mappings
+  let opcodeMap = compileOpcodes ((fillDefaultOpcode parsedData) ((sortOpcodes mappings) parsedData))
+  in Right $ runReader opcodeMap mappings
 
 -- Sort pass
 
-type OpcodeMap = Seq.Seq OpcodeStageMap
+type OpcodeMap = [OpcodeStageMap]
+type OpcodeMapSeq = Seq.Seq OpcodeStageMapSeq
 
-emptyOpcodeMap :: OpcodeMap
+emptyOpcodeMap :: (Seq.Seq (Seq.Seq [StageFlag]))
 emptyOpcodeMap = Seq.fromList $ take 256 $ repeat emptyOpcodeStageMap
 
-applyItemOpcodeMap :: OpcodeMap -> AsmItem -> OpcodeMap
-applyItemOpcodeMap m (Command (Symbol "OPCODE") [NumberArg opcodeNum] d) =
+applyItemOpcodeMap :: MappingData -> (Seq.Seq (Seq.Seq [StageFlag])) -> AsmItem -> (Seq.Seq (Seq.Seq [StageFlag]))
+applyItemOpcodeMap _ m (Command "OPCODE" [NumberArg opcodeNum] d) =
   Seq.update (fromIntegral opcodeNum) (sortStages d) m
-applyItemOpcodeMap m _ = m
+applyItemOpcodeMap mapping m (Command "OPCODE" [SymbolArg opcodeId] d) =
+  Seq.update (fromIntegral $ fromJustMsg ("Opcode id " ++ opcodeId ++ " not in mapping.") $
+              HashMap.lookup opcodeId $ opcode_ids mapping) (sortStages d) m
+applyItemOpcodeMap _ m _ = m
 
-sortOpcodes :: [AsmItem] -> OpcodeMap
-sortOpcodes items = foldl applyItemOpcodeMap emptyOpcodeMap items
+sortOpcodes :: MappingData -> [AsmItem] -> [[[StageFlag]]]
+sortOpcodes mappings items = map toList $ toList $
+  foldl (applyItemOpcodeMap mappings) emptyOpcodeMap items
 
-type OpcodeStageMap = Seq.Seq [StageFlag]
+type OpcodeStageMap = [[StageFlag]]
+type OpcodeStageMapSeq = Seq.Seq [StageFlag]
 
-emptyOpcodeStageMap :: OpcodeStageMap
+emptyOpcodeStageMap :: OpcodeStageMapSeq
 emptyOpcodeStageMap = Seq.fromList $ take 16 $ repeat []
 
-applyStageOpcodeStageMap :: OpcodeStageMap -> CommandStage -> OpcodeStageMap
+applyStageOpcodeStageMap :: OpcodeStageMapSeq -> CommandStage -> OpcodeStageMapSeq
 applyStageOpcodeStageMap m (Stage n f) = Seq.update (fromIntegral n) f m
 
-sortStages :: [CommandStage] -> OpcodeStageMap
+sortStages :: [CommandStage] -> OpcodeStageMapSeq
 sortStages stages = foldl applyStageOpcodeStageMap emptyOpcodeStageMap stages
+
+-- Fill default opcode pass
+
+fillDefaultOpcode :: [AsmItem] -> OpcodeMap ->  OpcodeMap
+fillDefaultOpcode items opcodeMap =
+  case (find findDefaultDecl items) of
+    Nothing -> opcodeMap
+    Just (Command _ _ stages) ->
+      let defStages = toList $ sortStages stages
+      in map (checkItem defStages) opcodeMap
+  where findDefaultDecl (Command "DEFAULT_OPCODE" _ _) = True
+        findDefaultDecl _ = False
+        checkItem a [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []] = a
+        checkItem _ b = b
+
+-- Fill default stage pass
+
+--fillDefaultStage :: [AsmItem] -> OpcodeMap -> OpcodeMap
+--fillDefaultStage items opcodeMap =
+--  let defCommands = filter findDefaultDecl items
+--  in foldl applyDefault opcodeMap defCommands
+--  where findDefaultDecl (Command "STAGE_DEFAULT" _ _) = True
+--        findDefaultDecl _ = False
+--        applyDefault acc defDecl = acc
 
 -- Compile pass
 
@@ -124,3 +154,8 @@ evalConds template conds = all (\(char, inverse) ->
                                   let s = List.isInfixOf [char] template
                                   in if inverse then s else not s
                                ) conds
+
+fromJustMsg :: String -> Maybe a -> a
+fromJustMsg m d = case d of
+  Nothing -> error m
+  Just a -> a

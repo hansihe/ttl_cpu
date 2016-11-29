@@ -1,8 +1,10 @@
-lm 0
+LOOP:
 addi 1
 sm 0
 subi 10
-jnez 0
+jnez FIN
 li 0
-sm 0
-jt 0
+jt LOOP
+FIN:
+lm 0
+jt LOOP

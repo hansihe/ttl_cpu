@@ -1,3 +1,12 @@
+define(`init', `
+<0
+EMIT_PC_PC_ADDER
+LATCH_PC
+LATCH_IR_R
+LATCH_IR_D
+>1
+')
+
 # ========
 # Addressed Operation macros
 # ========
@@ -44,24 +53,28 @@ LATCH_ACC
 
 # Override the first stage of every opcode so that
 # ir load is performed on every opcode.
-:OVERRIDE_PCS 0
-EMIT_PC_PCA
-LATCH_IR
-LATCH_PC
->1
+#:OVERRIDE_PCS 0
+#EMIT_PC_PCA
+#LATCH_IR
+#LATCH_PC
+#>1
 
 # ========
 # Default (NOP)
 # ========
-:DEFAULT
-<1
->0
+#:DEFAULT
+#<1
+#>0
 
 # ========
 # NOP
 # ========
 :OPCODE 00
-<1
+<0
+EMIT_PC_PC_ADDER
+LATCH_PC
+LATCH_IR_R
+LATCH_IR_D
 >0
 
 # ========

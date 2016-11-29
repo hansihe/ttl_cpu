@@ -178,3 +178,8 @@ cabal.project.local
 a.out
 haskell/out.*
 haskell/McAsm
+haskell/Asm
+
+*.tb
+*.tb.*
+*.bin.*

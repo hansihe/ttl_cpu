@@ -7,12 +7,11 @@ import Text.ParserCombinators.Parsec
 import qualified Text.Parsec as Parsec
 import qualified Text.Parsec.Number as ParsecNumber
 
-data AsmItem = Command Symbol [CommandArg] [CommandStage]
-             | Void
+data AsmItem = Command String [CommandArg] [CommandStage]
              deriving (Show)
 
 data CommandArg = NumberArg Integer
-                | SymbolArg Symbol
+                | SymbolArg String
                 deriving (Show)
 
 data CommandStage = Stage Integer [StageFlag]
@@ -25,12 +24,9 @@ data StageFlag = AlwaysFlag FlagType
 data FlagCondition = Condition [(Char, Bool)]
                    deriving (Show)
 
-data FlagType = AssertFlag Symbol
+data FlagType = AssertFlag String
               | GotoFlag Integer
               deriving (Show)
-
-data Symbol = Symbol String
-            deriving (Show)
 
 type P ret = Parsec.Parsec String () ret
 
@@ -56,7 +52,7 @@ command = do
   stages <- commandStages
   return $ Command name args stages
 
-commandHeader :: P (Symbol, [CommandArg])
+commandHeader :: P (String, [CommandArg])
 commandHeader = do
   _ <- Parsec.char ':'
   name <- symbol
@@ -112,8 +108,8 @@ stageAssert = symbol >>= (\s -> return $ AssertFlag s)
 commandArg :: P CommandArg
 commandArg = NumberArg <$> number <|> SymbolArg <$> symbol
 
-symbol :: P Symbol
-symbol = Parsec.many1 (alphaNum <|> (char '_')) >>= return . Symbol
+symbol :: P String
+symbol = Parsec.many1 (alphaNum <|> (char '_')) >>= return
 
 number :: P Integer
 number =

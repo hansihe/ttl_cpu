@@ -1,0 +1,13 @@
+# Woohoo
+add = 1
+# Woohoo
+# Woohoo
+add [1] acc
+# Woohoo
+add 2 acc
+add [[1]] acc
+
+jmp WOO
+
+WOO:
+add 1 acc
