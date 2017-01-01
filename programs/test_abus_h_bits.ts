@@ -1,0 +1,10 @@
+START:
+sbsel 0b00000001
+sbsel 0b00000010
+sbsel 0b00000100
+sbsel 0b00001000
+sbsel 0b00010000
+sbsel 0b00100000
+sbsel 0b01000000
+sbsel 0b10000000
+jt START

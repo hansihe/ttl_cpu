@@ -52,22 +52,22 @@ mov 0b00000001 [0xf7]
 sbsel displayBank
 // This is both faster and conserves instruction memory
 mov 0 acc
-mov acc [0x10]
-mov acc [0x11]
-mov acc [0x12]
-mov acc [0x13]
-mov acc [0x14]
-mov acc [0x15]
-mov acc [0x16]
-mov acc [0x17]
-mov acc [0x18]
-mov acc [0x19]
-mov acc [0x1a]
-mov acc [0x1b]
-mov acc [0x1c]
-mov acc [0x1d]
-mov acc [0x1e]
-mov acc [0x1f]
+mov acc >[0x00]
+mov acc >[0x01]
+mov acc >[0x02]
+mov acc >[0x03]
+mov acc >[0x04]
+mov acc >[0x05]
+mov acc >[0x06]
+mov acc >[0x07]
+mov acc >[0x08]
+mov acc >[0x09]
+mov acc >[0x0a]
+mov acc >[0x0b]
+mov acc >[0x0c]
+mov acc >[0x0d]
+mov acc >[0x0e]
+mov acc >[0x0f]
 sbsel mainBank
 
 MAIN_LOOP:
@@ -75,10 +75,14 @@ MAIN_LOOP:
 // === Paddle movement ===
 // Get buttons
 sbsel buttonBank
-mov [0x10] %0
-mov [0x11] %1
-mov [0x12] %2
-mov [0x13] %3
+//mov [0x10] %0
+//mov [0x11] %1
+//mov [0x12] %2
+//mov [0x13] %3
+mov 0 %0
+mov 0 %1
+mov 0 %2
+mov 0 %3
 sbsel mainBank
 
 // Apply paddle left
@@ -182,23 +186,18 @@ mov [acc] acc // Fetch value from LUT
 mov acc %0
 mov ballY acc
 add 1 acc // Offset 1 from edge to make room for paddle
-add 0xa0 acc // Offset to start of graphics memory
+//add 0xa0 acc // Offset to start of graphics memory
 mov acc %1
 mov %0 acc
 sbsel displayBank
-mov acc [%1] // Store graphic to graphics memory
+mov acc >[%1] // Store graphic to graphics memory
 
 // Clear neighbouring lines
 mov %1 acc
 sub 1 acc
-mov acc %1
-mov 0 acc
-mov acc [%1]
-mov %1 acc
+mov 0 >[acc]
 add 2 acc
-mov acc %1
-mov 0 acc
-mov acc [%1]
+mov 0 >[acc]
 sbsel mainBank
 
 // === Render paddles ===
@@ -216,8 +215,8 @@ mov [acc] acc
 mov acc %2
 
 sbsel displayBank
-mov %1 [0x10]
-mov %2 [0x1f]
+mov %1 >[0x00]
+mov %2 >[0x0f]
 sbsel mainBank
 
 // === Check for loss ===
@@ -249,34 +248,34 @@ jt MAIN_LOOP
 
 PLAYER_R_LOSS:
 sbsel displayBank
-mov 0b00100000 [0x15]
-mov 0b01000000 [0x16]
-mov 0b01111110 [0x17]
-mov 0b00000000 [0x18]
+mov 0b00100000 >[0x05]
+mov 0b01000000 >[0x06]
+mov 0b01111110 >[0x07]
+mov 0b00000000 >[0x08]
 jt MAIN_LOSS
 
 PLAYER_L_LOSS:
 sbsel displayBank
-mov 0b00100010 [0x15]
-mov 0b01000110 [0x16]
-mov 0b01001010 [0x17]
-mov 0b00110010 [0x18]
+mov 0b00100010 >[0x05]
+mov 0b01000110 >[0x06]
+mov 0b01001010 >[0x07]
+mov 0b00110010 >[0x08]
 jt MAIN_LOSS
 
 MAIN_LOSS:
-mov 0b00000000 [0x10]
-mov 0b01111110 [0x11]
-mov 0b01010000 [0x12]
-mov 0b00100000 [0x13]
-mov 0b00000000 [0x14]
+mov 0b00000000 >[0x00]
+mov 0b01111110 >[0x01]
+mov 0b01010000 >[0x02]
+mov 0b00100000 >[0x03]
+mov 0b00000000 >[0x04]
 
-mov 0b00000000 [0x19]
-mov 0b01111100 [0x1a]
-mov 0b00000010 [0x1b]
-mov 0b00111100 [0x1c]
-mov 0b00000010 [0x1d]
-mov 0b01111100 [0x1e]
-mov 0b00000000 [0x1f]
+mov 0b00000000 >[0x09]
+mov 0b01111100 >[0x0a]
+mov 0b00000010 >[0x0b]
+mov 0b00111100 >[0x0c]
+mov 0b00000010 >[0x0d]
+mov 0b01111100 >[0x0e]
+mov 0b00000000 >[0x0f]
 sbsel mainBank
 
 mov 0xff acc

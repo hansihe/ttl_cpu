@@ -1,0 +1,474 @@
+\define{stage0}{
+<0
+EMIT_PC_PC_ADDER
+LATCH_PC
+LATCH_IR_R
+LATCH_IR_D
+>1
+}
+
+\define{next_ir_d}{
+EMIT_PC_PC_ADDER
+LATCH_PC
+LATCH_IR_D
+}
+
+:OPCODE nop:
+\stage0
+<1
+>0
+
+:OPCODE mov_int_acc:
+\stage0
+<1
+EMIT_IR_D_DBUS
+ALUM_SHORT_B
+LATCH_ACC
+>0
+
+:OPCODE mov_deref_acc_acc:
+\stage0
+# Load address from acc
+<1
+ALUM_SHORT_A
+EMIT_ALUO_DBUS
+LATCH_RADDR_L
+>2
+# Latch acc
+<2
+EMIT_RAM_DBUS
+ALUM_SHORT_B
+LATCH_ACC
+>0
+
+:OPCODE mov_reg_acc:
+\stage0
+# Load address from ir_d
+<1
+EMIT_IR_D_DBUS
+LATCH_RADDR_L
+>2
+# Latch acc
+<2
+BLOCK_RAM_ADDR_H
+EMIT_RAM_DBUS
+ALUM_SHORT_B
+LATCH_ACC
+>0
+
+:OPCODE mov_deref_reg_acc:
+\stage0
+# Load address from ir_d
+<1
+EMIT_IR_D_DBUS
+LATCH_RADDR_L
+>2
+# Load address from ram
+<2
+BLOCK_RAM_ADDR_H
+EMIT_RAM_DBUS
+LATCH_RADDR_L
+>3
+# Latch acc
+<3
+EMIT_RAM_DBUS
+ALUM_SHORT_B
+LATCH_ACC
+>0
+
+:OPCODE mov_mem_acc:
+\stage0
+<1
+EMIT_IR_D_DBUS
+LATCH_RADDR_L
+>2
+<2
+EMIT_RAM_DBUS
+ALUM_SHORT_B
+LATCH_ACC
+>0
+
+:OPCODE mov_int_deref_acc:
+\stage0
+<1
+ALUM_SHORT_A
+EMIT_ALUO_DBUS
+LATCH_RADDR_L
+>2
+<2
+EMIT_IR_D_DBUS
+LATCH_RAM
+>3
+<3
+EMIT_IR_D_DBUS
+>0
+
+:OPCODE mov_reg_deref_acc:
+\stage0
+# Load reg address
+<1
+EMIT_IR_D_DBUS
+LATCH_RADDR_L
+>2
+# Latch reg value into alu_o
+<2
+BLOCK_RAM_ADDR_H
+EMIT_RAM_DBUS
+ALUM_SHORT_B
+LATCH_ALUO
+>3
+# Load address from acc
+<3
+ALUM_SHORT_A
+EMIT_ALUO_DBUS
+LATCH_RADDR_L
+>4
+# Store alu_o to ram
+<4
+EMIT_ALUO_REG_DBUS
+LATCH_RAM
+>5
+<5
+EMIT_ALUO_REG_DBUS
+>0
+
+# !! mov_mem_deref_acc
+
+:OPCODE mov_int_mem:
+\stage0
+<1
+EMIT_IR_D_DBUS
+LATCH_RADDR_L
+\next_ir_d
+>2
+<2
+EMIT_IR_D_DBUS
+LATCH_RAM
+>3
+<3
+EMIT_IR_D_DBUS
+>0
+
+:OPCODE mov_acc_mem:
+\stage0
+<1
+EMIT_IR_D_DBUS
+LATCH_RADDR_L
+>2
+<2
+ALUM_SHORT_A
+EMIT_ALUO_DBUS
+LATCH_RAM
+>3
+<3
+ALUM_SHORT_A
+EMIT_ALUO_DBUS
+>0
+
+# !! mov_deref_acc_mem
+# !! mov_reg_mem
+# !! mov_deref_reg_mem
+# !! mov_mem_mem
+
+:OPCODE mov_int_reg:
+\stage0
+<1
+EMIT_IR_D_DBUS
+LATCH_RADDR_L
+\next_ir_d
+>2
+<2
+EMIT_IR_D_DBUS
+BLOCK_RAM_ADDR_H
+LATCH_RAM
+>3
+<3
+EMIT_IR_D_DBUS
+BLOCK_RAM_ADDR_H
+>0
+
+:OPCODE mov_acc_reg:
+\stage0
+<1
+EMIT_IR_D_DBUS
+LATCH_RADDR_L
+>2
+<2
+ALUM_SHORT_A
+EMIT_ALUO_DBUS
+BLOCK_RAM_ADDR_H
+LATCH_RAM
+>3
+<3
+ALUM_SHORT_A
+EMIT_ALUO_DBUS
+BLOCK_RAM_ADDR_H
+>0
+
+# !! mov_deref_acc_reg
+# !! mov_reg_reg
+# !! mov_deref_reg_reg
+# !! mov_mem_reg
+
+# !! mov_int_deref_reg
+# !! mov_acc_deref_reg
+# !! mov_reg_deref_reg
+# !! mov_mem_deref_reg
+
+:OPCODE mov_int_io_mem:
+\stage0
+<1
+EMIT_IR_D_DBUS
+LATCH_RADDR_L
+EMIT_PC_PC_ADDER
+LATCH_PC
+LATCH_IR_D
+>2
+<2
+EMIT_IR_D_DBUS
+LATCH_IO
+>0
+
+:OPCODE mov_acc_io_mem:
+\stage0
+<1
+EMIT_IR_D_DBUS
+LATCH_RADDR_L
+>2
+<2
+ALUM_SHORT_A
+EMIT_ALUO_DBUS
+LATCH_IO
+>0
+
+:OPCODE mov_reg_io_mem:
+\stage0
+<1
+EMIT_IR_D_DBUS
+LATCH_RADDR_L
+>2
+<2
+BLOCK_RAM_ADDR_H
+EMIT_RAM_DBUS
+ALUM_SHORT_B
+LATCH_ALUO
+\next_ir_d
+>3
+<3
+EMIT_IR_D_DBUS
+LATCH_RADDR_L
+>4
+<4
+EMIT_ALUO_REG_DBUS
+LATCH_IO
+>0
+
+# !! mov_int_io_deref_reg
+#:OPCODE mov_int_io_deref_reg:
+#\stage0
+#<1
+#EMIT_IR_D_DBUS
+
+:OPCODE mov_acc_io_deref_reg:
+\stage0
+<1
+EMIT_IR_D_DBUS
+LATCH_RADDR_L
+>2
+<2
+BLOCK_RAM_ADDR_H
+EMIT_RAM_DBUS
+LATCH_RADDR_L
+>3
+<3
+ALUM_SHORT_A
+EMIT_ALUO_DBUS
+LATCH_IO
+>0
+
+# !! mov_reg_io_deref_reg
+
+:OPCODE mov_int_io_deref_acc:
+\stage0
+<1
+ALUM_SHORT_A
+EMIT_ALUO_DBUS
+LATCH_RADDR_L
+>2
+<2
+EMIT_IR_D_DBUS
+LATCH_IO
+>0
+
+# !! mov_reg_io_deref_acc
+
+:OPCODE add_int_acc:
+\stage0
+<1
+EMIT_IR_D_DBUS
+ALUM_ADD
+LATCH_ACC
+>0
+
+# !! add_acc_acc
+# !! add_reg_acc
+# !! add_deref_reg_acc
+:OPCODE add_mem_acc:
+\stage0
+<1
+EMIT_IR_D_DBUS
+LATCH_RADDR_L
+>2
+<2
+EMIT_RAM_DBUS
+ALUM_ADD
+LATCH_ACC
+>0
+
+:OPCODE sub_int_acc:
+\stage0
+<1
+EMIT_IR_D_DBUS
+ALUM_SUB_B
+LATCH_ACC
+>0
+
+# !! sub_reg_acc
+# !! sub_deref_reg_acc
+# !! sub_mem_acc
+
+:OPCODE jump_t:
+\stage0
+<1
+EMIT_IR_D_DBUS
+LATCH_PCI_H
+EMIT_PC_PC_ADDER
+LATCH_PC
+LATCH_IR_D
+>2
+<2
+EMIT_IR_D_DBUS
+EMIT_DBUS_PC_ADDER
+LATCH_PC
+>0
+
+:OPCODE jump_ez:
+\stage0
+<1
+ALUM_SHORT_A
+EMIT_IR_D_DBUS
+@@Z LATCH_PCI_H
+EMIT_PC_PC_ADDER
+LATCH_PC
+LATCH_IR_D
+>2
+@@!Z >0
+<2
+EMIT_IR_D_DBUS
+EMIT_DBUS_PC_ADDER
+LATCH_PC
+>0
+
+:OPCODE jump_nez:
+\stage0
+<1
+ALUM_SHORT_A
+EMIT_IR_D_DBUS
+@@!Z LATCH_PCI_H
+EMIT_PC_PC_ADDER
+LATCH_PC
+LATCH_IR_D
+>2
+@@Z >0
+<2
+EMIT_IR_D_DBUS
+EMIT_DBUS_PC_ADDER
+LATCH_PC
+>0
+
+:OPCODE jump_gz:
+\stage0
+<1
+ALUM_SHORT_A
+EMIT_IR_D_DBUS
+@@!Z!S LATCH_PCI_H
+EMIT_PC_PC_ADDER
+LATCH_PC
+LATCH_IR_D
+>2
+@@Z >0
+@@S >0
+<2
+EMIT_IR_D_DBUS
+EMIT_DBUS_PC_ADDER
+LATCH_PC
+>0
+
+:OPCODE jump_lez:
+\stage0
+<1
+ALUM_SHORT_A
+EMIT_IR_D_DBUS
+@@Z LATCH_PCI_H
+@@S LATCH_PCI_H
+EMIT_PC_PC_ADDER
+LATCH_PC
+LATCH_IR_D
+>2
+@@!Z!S >0
+<2
+EMIT_IR_D_DBUS
+EMIT_DBUS_PC_ADDER
+LATCH_PC
+>0
+
+:OPCODE jump_lz:
+\stage0
+<1
+ALUM_SHORT_A
+EMIT_IR_D_DBUS
+@@S LATCH_PCI_H
+EMIT_PC_PC_ADDER
+LATCH_PC
+LATCH_IR_D
+>2
+@@!S >0
+<2
+EMIT_IR_D_DBUS
+EMIT_DBUS_PC_ADDER
+LATCH_PC
+>0
+
+:OPCODE jump_gez:
+\stage0
+<1
+ALUM_SHORT_A
+EMIT_IR_D_DBUS
+@@!S LATCH_PCI_H
+@@Z LATCH_PCI_H
+EMIT_PC_PC_ADDER
+LATCH_PC
+LATCH_IR_D
+>2
+@@S!Z >0
+<2
+EMIT_IR_D_DBUS
+EMIT_DBUS_PC_ADDER
+LATCH_PC
+>0
+
+:OPCODE set_bsel_int:
+\stage0
+<1
+EMIT_IR_D_DBUS
+LATCH_RADDR_H
+>0
+
+:OPCODE hcf:
+# Do a recognizable blinky pattern on microcode address LEDs
+<0
+>10
+<10
+>4
+<4
+>10

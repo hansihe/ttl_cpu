@@ -1,0 +1,12 @@
+sbsel
+jez
+add 0 acc
+sub 0 acc
+
+mov 0 acc
+mov 0 [0]
+mov acc [0]
+mov acc >[0]
+mov [0] %0
+mov [0] acc
+mov %0 acc

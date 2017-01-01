@@ -55,7 +55,7 @@ initialValue mapping = foldl applyBit 0 (zip (flag_defaults mapping) (range (0, 
           else setBit acc num
 
 setFlag :: MappingData -> FlagType -> Word64 -> Word64
-setFlag _ (GotoFlag num) dat = ((fromIntegral num) .&. 0b1111) .|. dat
+setFlag _ (GotoFlag num) dat = ((fromIntegral num) .&. 0b1111) .|. ((complement 0b1111) .&. dat)
 setFlag mapping (AssertFlag flagName) dat =
   case resolveFlagBits mapping flagName of
     Nothing -> error $ "Flag not resolvable: " ++ flagName

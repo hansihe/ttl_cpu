@@ -1,10 +1,10 @@
 LOOP:
-addi 1
-sm 0
-subi 10
+add 1 acc
+mov acc [0]
+sub 10 acc
 jnez FIN
-li 0
+mov 0 acc
 jt LOOP
 FIN:
-lm 0
+mov [0] acc
 jt LOOP

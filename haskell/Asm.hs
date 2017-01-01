@@ -21,7 +21,7 @@ import qualified Data.Bits as Bits
 import System.IO (openFile, hClose, IOMode(WriteMode))
 import Data.ByteString.Builder (word8, hPutBuilder)
 import System.Process (readProcess)
-import Filesystem.Path (dropExtension)
+import qualified Data.Text as Text
 
 data AsmEnv = AsmEnv { assignments :: [(String, Integer)]
                      , mappings :: MappingData
@@ -81,6 +81,8 @@ inner = do
   -- Apply the formatting for every instruction as specified in the mappings file.
   -- This needs to be done after label collect because we also calculate jumps in this stage.
   let formattedStage = map (applyInstrFormattings labelOffsets) offsetStage
+  --liftIO $ print ast
+  --liftIO $ print formattedStage
   -- Collect the data from all instructions into a final array.
   let finalData = collectResult formattedStage
 
@@ -132,6 +134,12 @@ applyInstrFormatting _ instr ((FormatEntrySetter "int" [pos]), IntegerArg int) =
 applyInstrFormatting _ instr ((FormatEntrySetter "reg" [pos]), IntegerArg int) =
   instrSetDataAux instr pos (fromIntegral int)
 applyInstrFormatting _ instr ((FormatEntrySetter "d_reg" [pos]), IntegerArg int) =
+  instrSetDataAux instr pos (fromIntegral int)
+applyInstrFormatting _ instr ((FormatEntrySetter "io_mem" [pos]), IntegerArg int) =
+  instrSetDataAux instr pos (fromIntegral int)
+applyInstrFormatting _ instr ((FormatEntrySetter "io_d_acc" [pos]), IntegerArg int) =
+  instrSetDataAux instr pos (fromIntegral int)
+applyInstrFormatting _ instr ((FormatEntrySetter "io_d_reg" [pos]), IntegerArg int) =
   instrSetDataAux instr pos (fromIntegral int)
 applyInstrFormatting labelOffsets instr ((FormatEntrySetter "label" [upper, lower]), LabelArg label) =
   let labelOffset =
@@ -199,9 +207,12 @@ matchOpcodeNames env instrs = map (lookupItem $ mappings env) instrs
 parseVariantArgs :: String -> InstructionVariantData -> Maybe [ArgParserRet]
 parseVariantArgs args variant = do
   let argParsers = map (getArgTypeParser . formatEntryGetTypeName) (format variant) :: [ArgParser]
-  (argsParsed, _) <- case foldl foldParser (Right ([], args)) argParsers of
+  (argsParsed, remaining) <- case foldl foldParser (Right ([], args)) argParsers of
     Left err -> fail err
     Right res -> return res
+  _ <- if remaining == ""
+    then return ()
+    else fail ("Instruction variant " ++ (show variant) ++ " with args " ++ args ++ " has unmatched arguments")
   return argsParsed
     where foldParser :: Either String ([ArgParserRet], String) -> ArgParser -> Either String ([ArgParserRet], String)
           foldParser acc parser = do
@@ -226,6 +237,9 @@ getArgTypeParser "d_acc" = parseDeferAccArg
 getArgTypeParser "reg" = parseRegArg
 getArgTypeParser "d_reg" = parseDerefRegArg
 getArgTypeParser "mem" = parseMemArg
+getArgTypeParser "io_mem" = parseIoMemArg
+getArgTypeParser "io_d_reg" = parseIoDerefRegArg
+getArgTypeParser "io_d_acc" = parseIoDerefAccArg
 getArgTypeParser "label" = parseLabelArg
 getArgTypeParser typ = error $ "Invalid arg type '" ++ typ ++ "' in mapping"
 
@@ -250,6 +264,19 @@ parseDerefRegArg i = makeArgParser i $ do
 
 parseMemArg :: ArgParser
 parseMemArg i = makeWrappedParser i ((Parsec.string "["), (Parsec.string "]")) parseNumArg
+
+parseIoMemArg :: ArgParser
+parseIoMemArg i = makeWrappedParser i ((Parsec.string ">["), (Parsec.string "]")) parseNumArg
+
+parseIoDerefRegArg :: ArgParser
+parseIoDerefRegArg i = makeArgParser i $ do
+  _ <- Parsec.string ">[%"
+  num <- parseNumArg
+  _ <- Parsec.string "]"
+  return num
+
+parseIoDerefAccArg :: ArgParser
+parseIoDerefAccArg i = makeArgParser i (Parsec.string ">[acc]" >> return VoidArg)
 
 parseLabelArg :: ArgParser
 parseLabelArg i = makeArgParser i (symbol >>= return . LabelArg)

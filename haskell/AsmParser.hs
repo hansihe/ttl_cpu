@@ -35,6 +35,7 @@ instructionItem = do
   _ <- comments
   instrPos <- getSourceLine
   name <- symbol
+
   _ <- Parsec.spaces
 
   arguments <- Parsec.many $ Parsec.noneOf "\n\r"

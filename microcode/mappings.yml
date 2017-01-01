@@ -17,7 +17,7 @@ flags:
   latch_ram: [-9]
   latch_acc: [10]
   latch_aluo: [11]
-  # 12: NC
+  latch_io: [12]
   latch_raddr_l: [13]
   latch_raddr_h: [14]
   # 15: NC
@@ -32,8 +32,7 @@ flags:
 
   emit_dbus_pc_adder: [-21]
   emit_pc_pc_adder: [-22]
-  address_ram: [-23]
-  address_io: [23]
+  emit_io_dbus: [-23]
   block_ram_addr_h: [24]
 
   # MEM3
@@ -60,15 +59,15 @@ flag_defaults: [
     1, # latch_ram
     0, # latch_acc
     0, # latch_alu_o
-    0, # NC
+    0, # latch_io
     0, # latch_ram_addr_l
     0, # latch_ram_addr_h
     0, 0, # NC
     1, 0, 0, 0, # dbus emit select
     1, # emit_dbus_pc_adder
     1, # emit_pc_pc_adder
-    0, # io/ram addressing
-    1, # block_ram_addr_h
+    1, # emit_io_dbus
+    0, # block_ram_addr_h
     0, 0, 0, 0, 0, 0, 0, 0, # NC
     0, 0, # alu mode
     1, # alu pass c
@@ -98,12 +97,17 @@ aliases:
 
 # Conditionals can be specified in front of flags with an '@S!Z <flag>' notation.
 # They are specified in the array below from most significant to least significant.
+# Not currently used by McAsm.
 conditionals:
   - nil
   - C
   - S
   - Z
 
+# The opcode_ids map is used by both McAsm and Asm.
+# This makes it really easy to keep ids in sync across the ISA.
+# It is referenced in 'instructions' for Asm, and in the
+# microcode file in McAsm.
 opcode_ids:
   nop:                  0   # nop
 
@@ -155,6 +159,17 @@ opcode_ids:
   jump_lz:              39  # jlz
   jump_gez:             40  # jgez
 
+  mov_int_io_mem:       100 # mov 0 >[0]
+  mov_acc_io_mem:       101 # mov acc >[0]
+  mov_reg_io_mem:       102 # mov %0 >[0]
+
+  mov_int_io_deref_reg: 103 # mov 0 >[%0]
+  mov_acc_io_deref_reg: 104 # mov acc >[%0]
+  mov_reg_io_deref_reg: 105 # mov %0 >[%0]
+
+  mov_int_io_deref_acc: 106 # mov 0 >[acc]
+  mov_reg_io_deref_acc: 107 # mov %0 >[acc]
+
   set_bsel_int:         252 # sbsel 0
   set_bsel_acc:         253 # sbsel acc
   set_bsel_reg:         254 # sbsel %0
@@ -170,6 +185,13 @@ opcode_ids:
 #   in with zeroes to match the length of 'opcodes'.
 # - Parse the mnemonic arguments according to the 'format', apply the format instructions to the 'opcodeAux' array.
 instructions:
+    nop:
+      - opcodes: [nop]
+        opcodeAux: [0]
+        format: []
+      - opcodes: [nop]
+        opcodeAux: [0]
+        format: [acc]
     mov:
       - opcodes: [mov_int_acc]
         opcodeAux: [0]
@@ -254,6 +276,28 @@ instructions:
       - opcodes: [mov_int_mem, hcf]
         opcodeAux: [0, 0]
         format: [[int, [0]], [mem, [1]]]
+
+      - opcodes: [mov_int_io_mem, hcf]
+        opcodeAux: [0, 0]
+        format: [[int, [1]], [io_mem, [0]]]
+      - opcodes: [mov_acc_io_mem]
+        opcodeAux: [0, 0]
+        format: [acc, [io_mem, [0]]]
+      - opcodes: [mov_reg_io_mem, hcf]
+        opcodeAux: [0, 0]
+        format: [[reg, [0]], [io_mem, [1]]]
+
+      - opcodes: [mov_int_io_deref_reg, hcf]
+        opcodeAux: [0, 0]
+        format: [[int, [1]], [io_d_reg, [0]]]
+      - opcodes: [mov_acc_io_deref_reg]
+        opcodeAux: [0, 0]
+        format: [acc, [io_d_reg, [0]]]
+
+      - opcodes: [mov_int_io_deref_acc]
+        opcodeAux: [0, 0]
+        format: [[int, [0]], io_d_acc]
+
     add:
       - opcodes: [add_int_acc]
         opcodeAux: [0]
@@ -265,9 +309,12 @@ instructions:
         opcodeAux: [0]
         format: [[reg, [0]], acc]
     sub:
+      - opcodes: [sub_int_acc]
+        opcodeAux: [0]
+        format: [[int, [0]], acc]
       - opcodes: [sub_mem_acc]
         opcodeAux: [0]
-        format: []
+        format: [[mem, [0]], acc]
 
     jt:
       - opcodes: [jump_t, hcf]
@@ -330,5 +377,13 @@ instructions:
         opcodeAux: [0]
         format: [[int, [0]]]
       - opcodes: [set_bsel_acc]
+        opcodeAux: [0]
+        format: [acc]
+
+    hcf:
+      - opcodes: [hcf]
+        opcodeAux: [0]
+        format: []
+      - opcodes: [hcf]
         opcodeAux: [0]
         format: [acc]

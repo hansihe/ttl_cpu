@@ -14,6 +14,7 @@ import Data.Ix (range)
 import Data.List (find)
 import Data.Foldable (toList)
 import qualified Data.HashMap.Strict as HashMap
+import System.Process (readProcess)
 
 import Data.Word (Word64, Word8)
 import Data.ByteString.Builder (word8, hPutBuilder)
@@ -24,7 +25,8 @@ data CompileError = None
 main :: IO ()
 main = do
   [inFileName, outBaseName] <- getArgs
-  inData <- readFile inFileName
+  --inData <- readFile inFileName
+  inData <- readProcess "gpp" ["-T", inFileName] []
   mappings <- Yaml.decodeFileEither "../microcode/mappings.yml"
   case mappings of
     Left err -> print err
@@ -115,8 +117,8 @@ fillDefaultOpcode items opcodeMap =
 flagOrder :: [[(Char, Bool)] -> Bool]
 flagOrder =
   map (\template -> evalConds template) [
-  "", "Z", "S", "ZS", "C", "CZ", "CS", "CSZ",
-  "", "Z", "S", "ZS", "C", "CZ", "CS", "CSZ"
+  "Z", "", "ZS", "S", "ZC", "C", "ZCS", "CS",
+  "Z", "", "ZS", "S", "ZC", "C", "ZCS", "CS"
   ]
 
 type Output = [Word64]
@@ -140,7 +142,7 @@ compileFlags flags evalCondsB = do
 applyFlag :: ([(Char, Bool)] -> Bool) -> StageFlag -> Word64 -> MappingR Word64
 applyFlag evalCondsB (ConditionalFlag (Condition conds) flag) val =
   if evalCondsB conds
-  then applyFlagInner flag val >>= return
+  then applyFlagInner flag val
   else return val
 applyFlag _ (AlwaysFlag flag) val = applyFlagInner flag val >>= return
 
